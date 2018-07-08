@@ -2,23 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : MonoBehaviour
+{
     [SerializeField]
     private float vel;
     private Vector2 direcao;
     private Animator anim;
-	// Use this for initialization
-	void Start () {
-        anim = transform.GetComponent<Animator>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
+
+    private Rigidbody2D rigidbody;
+    // Use this for initialization
+    void Start()
+    {
+        anim = GetComponent<Animator>();
+        rigidbody = GetComponent<Rigidbody2D>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         InputPersonagem();
-        transform.Translate(direcao * vel * Time.deltaTime);
+        //transform.Translate(direcao * vel * Time.deltaTime);
 
         Animacao(direcao);
-	}
+    }
+
+    void FixedUpdate()
+    {
+        rigidbody.MovePosition(rigidbody.position + direcao * vel * Time.deltaTime);
+    }
 
     void InputPersonagem()
     {
@@ -46,11 +57,12 @@ public class PlayerController : MonoBehaviour {
         if (direcao.x != 0 || direcao.y != 0)
         {
             anim.SetLayerWeight(1, 1);
-        } else
+        }
+        else
         {
             anim.SetLayerWeight(1, 0);
         }
-        
+
 
         anim.SetFloat("x", dir.x);
         anim.SetFloat("y", dir.y);
