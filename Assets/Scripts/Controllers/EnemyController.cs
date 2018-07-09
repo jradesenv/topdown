@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class EnemyController : MonoBehaviour
 {
-    public Vector2 currentDirection;
+    public Transform target;
 
     [SerializeField]
     private float speed;
     private Vector2 direction;
     private Animator animator;
+    private Vector2 currentDirection;
     private Rigidbody2D rigidbody;
     private SpriteRenderer spriteRenderer;
     private bool tookDamage = false;
@@ -36,6 +37,13 @@ public class PlayerController : MonoBehaviour
         UpdateSprite();
     }
 
+    void GetInputs()
+    {
+        //TODO get direction of player
+        direction = Vector2.zero;
+        currentDirection = Vector2.down;
+    }
+
     void FixedUpdate()
     {
         rigidbody.MovePosition(rigidbody.position + direction * speed * Time.deltaTime);
@@ -59,57 +67,24 @@ public class PlayerController : MonoBehaviour
         spriteRenderer.color = Color.Lerp(Color.white, Color.red, Mathf.PingPong(x * Time.time, 0.5f));
     }
 
-    void GetInputs()
-    {
-        direction = Vector2.zero;
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            direction += Vector2.up;
-            currentDirection = direction;
-        }
-        if (Input.GetKey(KeyCode.DownArrow))
-        {
-            direction += Vector2.down;
-            currentDirection = direction;
-        }
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            direction += Vector2.left;
-            currentDirection = direction;
-        }
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            direction += Vector2.right;
-            currentDirection = direction;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            isAttacking = true;
-        } else
-        {
-            isAttacking = false;
-        }
-    }
-
     void UpdateAnimation(Vector2 dir)
     {
-        if (direction.x != 0 || direction.y != 0)
-        {
-            animator.SetLayerWeight(1, 1);
-        }
-        else
-        {
-            animator.SetLayerWeight(1, 0);
-        }
+        //if (direction.x != 0 || direction.y != 0)
+        //{
+        //    animator.SetLayerWeight(1, 1);
+        //}
+        //else
+        //{
+        //    animator.SetLayerWeight(1, 0);
+        //}
 
-        animator.SetFloat("x", dir.x);
-        animator.SetFloat("y", dir.y);
+        //animator.SetFloat("x", dir.x);
+        //animator.SetFloat("y", dir.y);
 
-        if (isAttacking)
-        {
-            animator.SetTrigger("attack");
-        }
+        //if (isAttacking)
+        //{
+        //    animator.SetTrigger("attack");
+        //}
     }
 
     public IEnumerator KnockBack(float duracao, float poder, Vector2 direcao)
@@ -127,8 +102,11 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("EnemyAttack"))
+        if (collision.gameObject.CompareTag("PlayerAttack"))
         {
+            PlayerController player = collision.GetComponentInParent<PlayerController>();
+            currentDirection = player.currentDirection * -1;
+
             StartCoroutine(KnockBack(1f, 200, currentDirection));
             DanoCor();
         }
