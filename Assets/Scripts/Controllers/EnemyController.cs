@@ -17,6 +17,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     private bool isInDangeState = false;
     private bool isAttacking = false;
+    private Transform player;
 
     // Use this for initialization
     void Start()
@@ -25,6 +26,7 @@ public class EnemyController : MonoBehaviour
         rigidbody = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         direction = Vector2.zero;
+        player = GameObject.Find("Player").transform;
     }
 
     // Update is called once per frame
@@ -35,6 +37,13 @@ public class EnemyController : MonoBehaviour
 
         UpdateAnimation(direction);
         UpdateSprite();
+
+        //Vector2 velocity = new Vector2((transform.position.x - player.position.x) * speed * Time.deltaTime, (transform.position.y - player.position.y) * speed * Time.deltaTime);
+        //rigidbody.velocity = -velocity;
+
+
+        rigidbody.MovePosition(Vector2.MoveTowards(transform.position, player.transform.position,
+                                                  speed * Time.deltaTime));
     }
 
     void GetInputs()
@@ -46,7 +55,9 @@ public class EnemyController : MonoBehaviour
 
     void FixedUpdate()
     {
-        rigidbody.MovePosition(rigidbody.position + direction * speed * Time.deltaTime);
+        //transform.position = Vector2.MoveTowards(transform.position, Player.transform.position, speed * Time.deltaTime);
+        
+        
     }
 
     void UpdateSprite()

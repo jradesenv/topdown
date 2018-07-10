@@ -12,9 +12,8 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private Rigidbody2D rigidbody;
     private SpriteRenderer spriteRenderer;
+    private HeartController heartController;
     private bool tookDamage = false;
-    [SerializeField]
-    private bool isInDangeState = false;
     private bool isAttacking = false;
 
     // Use this for initialization
@@ -24,6 +23,7 @@ public class PlayerController : MonoBehaviour
         rigidbody = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         direction = Vector2.zero;
+        heartController = GetComponent<HeartController>();
     }
 
     // Update is called once per frame
@@ -46,11 +46,12 @@ public class PlayerController : MonoBehaviour
         if (tookDamage)
         {
             PingPongColor(8);
-        }
-
-        if (isInDangeState)
+        } else if (heartController.isInDangeState)
         {
             PingPongColor(1);
+        } else
+        {
+            spriteRenderer.color = Color.white;
         }
     }
 
@@ -127,10 +128,16 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("EnemyAttack"))
+        if (!tookDamage)
         {
-            StartCoroutine(KnockBack(1f, 200, currentDirection));
-            DanoCor();
+            if (collision.gameObject.CompareTag("EnemyAttack"))
+            {
+                Debug.Log("enemyattack");
+                StartCoroutine(KnockBack(1f, 100, currentDirection));
+                heartController.TakeDamage(-1);
+
+                DanoCor();
+            }
         }
     }
 
@@ -142,7 +149,7 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator LiberaCor()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
         tookDamage = false;
         spriteRenderer.color = new Color(1, 1, 1, 1);
     }

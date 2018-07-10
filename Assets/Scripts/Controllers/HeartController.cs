@@ -9,6 +9,7 @@ public class HeartController : MonoBehaviour {
     public int curHealth;
     public Image[] healthImages;
     public Sprite[] healthSprites;
+    public bool isInDangeState = false;
 
     private int maxHeartAmount = 10;
     private int maxHealth;
@@ -41,6 +42,11 @@ public class HeartController : MonoBehaviour {
         UpdateHearts();
     }
 
+    void UpdateState()
+    {
+        isInDangeState = curHealth < 2;
+    }
+
     void UpdateHearts()
     {
         bool empty = false;
@@ -68,6 +74,8 @@ public class HeartController : MonoBehaviour {
                 }
             }
         }
+
+        UpdateState();
     }
 
     public void TakeDamage(int amount)
