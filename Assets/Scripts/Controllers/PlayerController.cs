@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        rigidbody.MovePosition(rigidbody.position + direction * speed * Time.deltaTime);
+        rigidbody.MovePosition(rigidbody.position + direction * speed * Time.deltaTime);        
     }
 
     void UpdateSprite()
@@ -62,29 +62,32 @@ public class PlayerController : MonoBehaviour
 
     void GetInputs()
     {
+        float x = Input.GetAxisRaw("Horizontal");
+        float y = Input.GetAxisRaw("Vertical");
+
         direction = Vector2.zero;
-        if (Input.GetKey(KeyCode.UpArrow))
+
+        if (y > 0)
         {
             direction += Vector2.up;
             currentDirection = direction;
-        }
-        if (Input.GetKey(KeyCode.DownArrow))
+        } else if (y < 0)
         {
             direction += Vector2.down;
             currentDirection = direction;
         }
-        if (Input.GetKey(KeyCode.LeftArrow))
+
+        if (x > 0)
+        {
+            direction += Vector2.right;
+            currentDirection = direction;
+        } else if (x < 0)
         {
             direction += Vector2.left;
             currentDirection = direction;
         }
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            direction += Vector2.right;
-            currentDirection = direction;
-        }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetButtonDown("Fire1"))
         {
             isAttacking = true;
         } else
@@ -132,7 +135,6 @@ public class PlayerController : MonoBehaviour
         {
             if (collision.gameObject.CompareTag("EnemyAttack"))
             {
-                Debug.Log("enemyattack");
                 StartCoroutine(KnockBack(1f, 100, currentDirection));
                 heartController.TakeDamage(-1);
 
